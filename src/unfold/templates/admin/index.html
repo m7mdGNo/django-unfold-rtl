@@ -1,21 +1,386 @@
 {% extends 'admin/base.html' %}
-
 {% load i18n %}
 
 {% block breadcrumbs %}{% endblock %}
 
-{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block title %}
+    {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
 
 {% block branding %}
     {% include "unfold/helpers/site_branding.html" %}
 {% endblock %}
 
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+{% if LANGUAGE_BIDI %}
+    {% block extrastyle %}
+        <style>
+        </style>
+    {% endblock %}
+{% endif %}
+
 {% block content %}
-    <div class="flex flex-col lg:flex-row lg:gap-8">
-        <div class="grow">
-            {% include "unfold/helpers/app_list_default.html" %}
+<div class="container mx-auto p-6">
+    <!-- Dashboard Title -->
+    <h1 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+        {% trans 'Dashboard' %}
+    </h1>
+
+    {% if dashboard %}
+        
+        <!-- Stats Cards Grid (5 columns on large screens) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+            <!-- Sales Today Card -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Sales" %}
+                    </p>
+                    <div class="font-semibold text-2xl text-gray-900 dark:text-white tracking-tight">
+                        {{ dashboard.total_sales_today }}
+                    </div>
+                    <div class="absolute {% if LANGUAGE_BIDI %}left-0{% else %}right-0{% endif %} top-0">
+                        <span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400">
+                            {% trans "Today" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t flex items-center -mb-6 -mx-6 mt-6 pb-2 pt-2 px-6 text-sm dark:border-base-800">
+                    <strong class="text-green-700 font-semibold dark:text-green-400">{{ dashboard.sales_progress_today }}%</strong>
+                    {% if LANGUAGE_BIDI %}
+                        &nbsp;{% trans "progress from yesterday" %}
+                    {% else %}
+                        &nbsp;progress from yesterday
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end card -->
+
+            <!-- Sales This Month Card -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Sales" %}
+                    </p>
+                    <div class="font-semibold text-2xl text-gray-900 dark:text-white tracking-tight">
+                        {{ dashboard.total_sales_month }}
+                    </div>
+                    <div class="absolute {% if LANGUAGE_BIDI %}left-0{% else %}right-0{% endif %} top-0">
+                        <span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400">
+                            {% trans "This Month" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t flex items-center -mb-6 -mx-6 mt-6 pb-2 pt-2 px-6 text-sm dark:border-base-800">
+                    <strong class="text-green-700 font-semibold dark:text-green-400">{{ dashboard.sales_progress_month }}%</strong>
+                    {% if LANGUAGE_BIDI %}
+                        &nbsp;{% trans "progress from last month" %}
+                    {% else %}
+                        &nbsp;progress from last month
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end card -->
+
+            <!-- Expenses This Month Card -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Expenses" %}
+                    </p>
+                    <div class="font-semibold text-2xl text-gray-900 dark:text-white tracking-tight">
+                        {{ dashboard.total_expenses_month }}
+                    </div>
+                    <div class="absolute {% if LANGUAGE_BIDI %}left-0{% else %}right-0{% endif %} top-0">
+                        <span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400">
+                            {% trans "This Month" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t flex items-center -mb-6 -mx-6 mt-6 pb-2 pt-2 px-6 text-sm dark:border-base-800">
+                    <strong class="text-green-700 font-semibold dark:text-green-400">{{ dashboard.expenses_progress_month }}%</strong>
+                    {% if LANGUAGE_BIDI %}
+                        &nbsp;{% trans "progress from last month" %}
+                    {% else %}
+                        &nbsp;progress from last month
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end card -->
+
+            <!-- Purchases This Month Card -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Purchases" %}
+                    </p>
+                    <div class="font-semibold text-2xl text-gray-900 dark:text-white tracking-tight">
+                        {{ dashboard.total_purchases_cost_month }}
+                    </div>
+                    <div class="absolute {% if LANGUAGE_BIDI %}left-0{% else %}right-0{% endif %} top-0">
+                        <span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400">
+                            {% trans "This Month" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t flex items-center -mb-6 -mx-6 mt-6 pb-2 pt-2 px-6 text-sm dark:border-base-800">
+                    <strong class="text-green-700 font-semibold dark:text-green-400">{{ dashboard.purchases_progress_month }}%</strong>
+                    {% if LANGUAGE_BIDI %}
+                        &nbsp;{% trans "progress from last month" %}
+                    {% else %}
+                        &nbsp;progress from last month
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end card -->
+
+            <!-- Net Profit This Month Card -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Net Profit" %}
+                    </p>
+                    <div class="font-semibold text-2xl text-gray-900 dark:text-white tracking-tight">
+                         {{ dashboard.net_profit }} {% trans 'SAR'%}
+                    </div>
+                    <div class="absolute {% if LANGUAGE_BIDI %}left-0{% else %}right-0{% endif %} top-0">
+                        <span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400">
+                            {% trans "This Month" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t flex items-center -mb-6 -mx-6 mt-6 pb-2 pt-2 px-6 text-sm dark:border-base-800">
+                    <strong class="text-green-700 font-semibold dark:text-green-400">{{ dashboard.net_profit_progress_month }}%</strong>
+                    {% if LANGUAGE_BIDI %}
+                        &nbsp;{% trans "progress from last month" %}
+                    {% else %}
+                        &nbsp;progress from last month
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end card -->
         </div>
 
-        {% include "unfold/helpers/history.html" %}
+        <!-- Charts Grid (2 columns on medium and larger screens) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Last Week Reservations Chart (Area Chart) -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="">
+                        {% trans "Daily Sales" %}
+                    </p>
+                    <div id="chart1" class="w-full h-[300px] mt-4 "></div>
+                </div>
+            </div>
+            <!-- end chart -->
+
+            <!-- Branches Chart (Pie Chart) -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="leading-relaxed mb-0 text-sm text-gray-700 dark:text-gray-300">
+                        {% trans "Top Medicines Sold" %}
+                    </p>
+                    <div id="chart2" class="w-full h-[300px] mt-4"></div>
+                </div>
+            </div>
+            <!-- end chart -->
+        </div>
+        <!-- end charts grid -->
+
+    
+
+    <!-- New Tables Section - Third Row -->
+    <div class="grid grid-cols-1 gap-6 mt-6">
+        <!-- Tables Container -->
+        <div class="border rounded shadow-sm dark:border-base-800 overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 p-6">
+                
+                {% get_current_language_bidi as LANGUAGE_BIDI %}
+                <!-- Top Services Table -->
+                <div class="col-span-1">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                        {% trans "Recent Sales" %}
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-gray-700 dark:text-gray-300" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+                            <thead class="bg-gray-50 dark:bg-base-900">
+                                <tr>
+                                    <th class="px-4 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">{% trans "Sale" %}</th>
+                                    <th class="px-4 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">{% trans "Payment Method" %}</th>
+                                    <th class="px-4 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">{% trans "Status" %}</th>
+                                    <th class="px-4 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">{% trans "Date" %}</th>
+                                    <th class="px-4 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">{% trans "Net Amount" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in dashboard.recent_sales %}
+                                    <tr class="border-t dark:border-base-800">
+                                        <td class="px-4 py-2">
+                                            <a href="{% url 'admin:finance_sale_change' sale.id %}" class="inline-block text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:text-blue-300">
+                                                SALE #{{ sale.id }}
+                                            </a>
+                                        </td>
+                                        <td class="px-4 py-2">{{ sale.payment_method.name }}</td>
+                                        <td class="px-4 py-2">{{ sale.get_status_display }}</td>
+                                        <td class="px-4 py-2">{{ sale.sale_date }}</td>
+                                        <td class="px-4 py-2">{{ sale.net_amount }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-2 text-center">{% trans "No sales data" %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
     </div>
+    <!-- End Tables Section -->
+
+    <!-- Font Awesome and ApexCharts Scripts -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        // Area Chart (Last Week Reservations)
+        const options1 = {
+            chart: {
+                type: 'area',
+                height: 300,
+                background: 'transparent',
+                toolbar: {
+                    show: false
+                }
+            },
+            series: [{
+                name: 'sales',
+                data: {{ dashboard.daily_sales.data|safe }}
+            }],
+            xaxis: {
+                categories: {{ dashboard.daily_sales.labels|safe }},
+                labels: {
+                    show: true,
+                    style: {
+                        colors: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151'
+                    }
+                },
+
+            },
+            colors: ['#14b8a6'], // Tailwind teal-500
+            theme: {
+                mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            grid: {
+                borderColor: document.documentElement.classList.contains('dark') ? '#4a5568' : '#e2e8f0'
+            },
+            tooltip: {
+                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            }
+        };
+        const chartElement = document.querySelector("#chart1");
+        const chart1 = new ApexCharts(chartElement, options1);
+        chart1.render();
+        console.log(chartElement)
+
+
+        {% comment %} if (!chartElement) {
+            console.error("Chart container #chart1 not found in the DOM!");
+        } else {
+            // Log the options to verify the categories
+            console.log("Chart options:", options1);
+            
+            // Render the chart
+            const chart1 = new ApexCharts(chartElement, options1);
+            chart1.render();
+        }  {% endcomment %}
+
+        // Pie Chart (Branches)
+        const options2 = {
+            chart: {
+                type: 'pie',
+                height: 300,
+                background: 'transparent',
+                toolbar: {
+                    show: false
+                }
+            },
+            series: {{ dashboard.top_medicines.data|safe }},
+            labels: {{ dashboard.top_medicines.labels|safe }},
+            colors: [
+                '#14b8a6', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6',
+                '#14b8a6', '#6b7280', '#ec4899', '#7c3aed', '#f3f4f6'
+            ],
+            legend: {
+                position: 'bottom',
+                labels: {
+                    colors: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151'
+                }
+            },
+            theme: {
+                mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: [document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151']
+                }
+            }
+        };
+        const chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
+        chart2.render();
+
+        // Theme Switch Listener
+        const observer = new MutationObserver(() => {
+            const isDark = document.documentElement.classList.contains('dark');
+            chart1.updateOptions({
+                theme: { mode: isDark ? 'dark' : 'light' },
+                xaxis: {categories: {{ dashboard.daily_sales.labels|safe }}, labels: { style: { colors: isDark ? '#d1d5db' : '#374151' } } },
+                grid: { borderColor: isDark ? '#4a5568' : '#e2e8f0' },
+                tooltip: { theme: isDark ? 'dark' : 'light' }
+            });
+            chart2.updateOptions({
+                theme: { mode: isDark ? 'dark' : 'light' },
+                legend: { labels: { colors: isDark ? '#d1d5db' : '#374151' } },
+                dataLabels: { style: { colors: [isDark ? '#d1d5db' : '#374151'] } }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+
+    // Update theme switch listener to include new charts
+    observer.disconnect();
+    const updatedObserver = new MutationObserver(() => {
+        const isDark = document.documentElement.classList.contains('dark');
+        chart1.updateOptions({
+            theme: { mode: isDark ? 'dark' : 'light' },
+            xaxis: { categories: {{ dashboard.daily_sales.labels|safe }}, labels: { style: { colors: isDark ? '#d1d5db' : '#374151' } } },
+            grid: { borderColor: isDark ? '#4a5568' : '#e2e8f0' },
+            tooltip: { theme: isDark ? 'dark' : 'light' }
+        });
+        chart2.updateOptions({
+            theme: { mode: isDark ? 'dark' : 'light' },
+            legend: { labels: { colors: isDark ? '#d1d5db' : '#374151' } },
+            dataLabels: { style: { colors: [isDark ? '#d1d5db' : '#374151'] } }
+        });
+    });
+    updatedObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    </script>
+    {% else %}
+        <div class="flex items-center justify-center h-64">
+            <h1 class="text-4xl font-bold text-center text-gray-800 dark:text-white">
+                Hello {{ request.user.first_name }} {{ request.user.last_name }}!
+            </h1>
+        </div>
+    {% endif %}
 {% endblock %}

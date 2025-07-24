@@ -29,7 +29,7 @@
                                 <li>
                                     <a href="{% if item.link_callback %}{{ item.link_callback }}{% else %}{{ item.link }}{% endif %}" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 {% if item.active %}bg-base-100 font-semibold text-primary-600 dark:bg-white/[.06] dark:text-primary-500{% endif %}">
                                         {% if item.icon %}
-                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                            <span class="material-symbols-outlined md-18 mr-3 ml-3 w-[18px]">
                                                 {{ item.icon }}
                                             </span>
                                         {% endif %}

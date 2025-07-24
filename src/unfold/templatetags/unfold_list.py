@@ -25,7 +25,7 @@ from django.template.loader import render_to_string
 from django.urls import NoReverseMatch
 from django.utils.html import format_html
 from django.utils.safestring import SafeText, mark_safe
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, get_language_bidi
 
 from unfold.utils import (
     display_for_dropdown,
@@ -38,61 +38,124 @@ from unfold.widgets import UnfoldBooleanWidget
 
 register = Library()
 
-LINK_CLASSES = [
-    "text-font-important-light",
-    "dark:text-font-important-dark",
-]
+def get_directional_classes():
+    """
+    Returns a tuple of (row_classes, checkbox_classes, link_classes) adjusted for RTL/LTR.
+    """
+    is_rtl = get_language_bidi()
+    # Directional classes
+    if is_rtl:
+        # For RTL, swap left/right, margin, padding, and text alignment
+        row_classes = [
+            "align-middle",
+            "flex",
+            "border-t",
+            "border-base-200",
+            "font-normal",
+            "gap-4",
+            "min-w-0",
+            "overflow-hidden",
+            "px-3",
+            "py-2",
+            "text-right",
+            "before:flex",
+            "before:capitalize",
+            "before:content-[attr(data-label)]",
+            "before:items-center",
+            "before:font-semibold",
+            "before:text-font-important-light",
+            "before:ml-auto",  # was mr-auto
+            "first:border-t-0",
+            "lg:before:hidden",
+            "lg:first:border-t",
+            "lg:py-3",
+            "lg:table-cell",
+            "dark:border-base-800",
+            "dark:before:text-font-important-dark",
+        ]
+        checkbox_classes = [
+            "action-checkbox",
+            "align-middle",
+            "flex",
+            "items-center",
+            "px-3",
+            "py-2",
+            "text-right",
+            "before:block",
+            "before:capitalize",
+            "before:content-[attr(data-label)]",
+            "before:font-semibold",
+            "before:ml-auto",  # was mr-auto
+            "before:text-font-important-light",
+            "lg:before:hidden",
+            "lg:border-t",
+            "lg:border-base-200",
+            "lg:table-cell",
+            "dark:lg:border-base-800",
+            "dark:before:text-font-important-dark",
+        ]
+        link_classes = [
+            "text-font-important-light",
+            "dark:text-font-important-dark",
+            "rtl",  # Optionally add a class for custom styling
+        ]
+    else:
+        row_classes = [
+            "align-middle",
+            "flex",
+            "border-t",
+            "border-base-200",
+            "font-normal",
+            "gap-4",
+            "min-w-0",
+            "overflow-hidden",
+            "px-3",
+            "py-2",
+            "text-left",
+            "before:flex",
+            "before:capitalize",
+            "before:content-[attr(data-label)]",
+            "before:items-center",
+            "before:font-semibold",
+            "before:text-font-important-light",
+            "before:mr-auto",
+            "first:border-t-0",
+            "lg:before:hidden",
+            "lg:first:border-t",
+            "lg:py-3",
+            "lg:table-cell",
+            "dark:border-base-800",
+            "dark:before:text-font-important-dark",
+        ]
+        checkbox_classes = [
+            "action-checkbox",
+            "align-middle",
+            "flex",
+            "items-center",
+            "px-3",
+            "py-2",
+            "text-left",
+            "before:block",
+            "before:capitalize",
+            "before:content-[attr(data-label)]",
+            "before:font-semibold",
+            "before:mr-auto",
+            "before:text-font-important-light",
+            "lg:before:hidden",
+            "lg:border-t",
+            "lg:border-base-200",
+            "lg:table-cell",
+            "dark:lg:border-base-800",
+            "dark:before:text-font-important-dark",
+        ]
+        link_classes = [
+            "text-font-important-light",
+            "dark:text-font-important-dark",
+        ]
+    return row_classes, checkbox_classes, link_classes
 
-ROW_CLASSES = [
-    "align-middle",
-    "flex",
-    "border-t",
-    "border-base-200",
-    "font-normal",
-    "gap-4",
-    "min-w-0",
-    "overflow-hidden",
-    "px-3",
-    "py-2",
-    "text-left",
-    "before:flex",
-    "before:capitalize",
-    "before:content-[attr(data-label)]",
-    "before:items-center",
-    "before:font-semibold",
-    "before:text-font-important-light",
-    "before:mr-auto",
-    "first:border-t-0",
-    "lg:before:hidden",
-    "lg:first:border-t",
-    "lg:py-3",
-    "lg:table-cell",
-    "dark:border-base-800",
-    "dark:before:text-font-important-dark",
-]
-
-CHECKBOX_CLASSES = [
-    "action-checkbox",
-    "align-middle",
-    "flex",
-    "items-center",
-    "px-3",
-    "py-2",
-    "text-left",
-    "before:block",
-    "before:capitalize",
-    "before:content-[attr(data-label)]",
-    "before:font-semibold",
-    "before:mr-auto",
-    "before:text-font-important-light",
-    "lg:before:hidden",
-    "lg:border-t",
-    "lg:border-base-200",
-    "lg:table-cell",
-    "dark:lg:border-base-800",
-    "dark:before:text-font-important-dark",
-]
-
+def get_dir_attr():
+    return ' dir="rtl"' if get_language_bidi() else ' dir="ltr"'
 
 def result_headers(cl):
     """
@@ -207,11 +270,14 @@ def items_for_result(
     pk = cl.lookup_opts.pk.attname
     headers = list(result_headers(cl))
 
+    row_classes_base, checkbox_classes_base, link_classes = get_directional_classes()
+    dir_attr = get_dir_attr()
+
     for field_index, field_name in enumerate(cl.list_display):
         empty_value_display = cl.model_admin.get_empty_value_display()
         row_classes = [
             f"field-{_coerce_field_name(field_name, field_index)}",
-            *ROW_CLASSES,
+            *row_classes_base,
         ]
 
         try:
@@ -224,7 +290,7 @@ def items_for_result(
             )
             if f is None or f.auto_created:
                 if field_name == "action_checkbox":
-                    row_classes = CHECKBOX_CLASSES
+                    row_classes = checkbox_classes_base
                 boolean = getattr(attr, "boolean", False)
                 label = getattr(attr, "label", False)
                 header = getattr(attr, "header", False)
@@ -283,13 +349,13 @@ def items_for_result(
                 link_or_text = format_html(
                     '<a href="{}" class="{}" {}>{}</a>',
                     url,
-                    " ".join(LINK_CLASSES),
+                    " ".join(link_classes),
                     format_html(' data-popup-opener="{}"', value)
                     if cl.is_popup
                     else "",
                     result_repr,
                 )
-            row_class = mark_safe(f' class="{" ".join(row_classes)}"')
+            row_class = mark_safe(f' class="{" ".join(row_classes)}"{dir_attr}')
             yield format_html(
                 '<{}{} data-label="{}">{}</{}>',
                 table_tag,
@@ -321,7 +387,7 @@ def items_for_result(
                 if bf.errors:
                     row_classes += ["group", "errors"]
 
-            row_class = mark_safe(f' class="{" ".join(row_classes)}"')
+            row_class = mark_safe(f' class="{" ".join(row_classes)}"{dir_attr}')
 
             if field_index != 0:
                 yield format_html(
@@ -339,7 +405,7 @@ def items_for_result(
                 )
 
     if form and not form[cl.model._meta.pk.name].is_hidden:
-        yield format_html("<td>{}</td>", form[cl.model._meta.pk.name])
+        yield format_html("<td{}>{}</td>", get_dir_attr(), form[cl.model._meta.pk.name])
 
 
 class UnfoldResultList(ResultList):
@@ -373,6 +439,9 @@ def result_list(context: dict[str, Any], cl: ChangeList) -> dict[str, Any]:
         if h["sortable"] and h["sorted"]:
             num_sorted_fields += 1
 
+    # Add direction to context for template use if needed
+    direction = "rtl" if get_language_bidi() else "ltr"
+
     return {
         "cl": cl,
         "result_hidden_fields": list(result_hidden_fields(cl)),
@@ -381,6 +450,7 @@ def result_list(context: dict[str, Any], cl: ChangeList) -> dict[str, Any]:
         "results": list(results(cl)),
         "actions_row": context.get("actions_row"),
         "has_add_permission": cl.model_admin.has_add_permission(context["request"]),
+        "direction": direction,
     }
 
 
@@ -399,19 +469,21 @@ def paginator_number(cl: ChangeList, i: Union[str, int]) -> Union[str, SafeText]
     """
     Generate an individual page index link in a paginated list.
     """
+    dir_attr = get_dir_attr()
     if i == cl.paginator.ELLIPSIS:
         return render_to_string(
             "unfold/helpers/pagination_ellipsis.html",
-            {"ellipsis": cl.paginator.ELLIPSIS},
+            {"ellipsis": cl.paginator.ELLIPSIS, "dir": "rtl" if get_language_bidi() else "ltr"},
         )
     elif i == cl.page_num:
         return render_to_string(
-            "unfold/helpers/pagination_current_item.html", {"number": i}
+            "unfold/helpers/pagination_current_item.html", {"number": i, "dir": "rtl" if get_language_bidi() else "ltr"}
         )
     else:
         return format_html(
-            '<a href="{}"{}>{}</a> ',
+            '<a href="{}"{}{}>{}</a> ',
             cl.get_query_string({PAGE_VAR: i}),
             mark_safe(' class="end"' if i == cl.paginator.num_pages else ""),
+            dir_attr,
             i,
         )

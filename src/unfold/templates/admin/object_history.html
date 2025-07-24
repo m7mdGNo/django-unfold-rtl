@@ -1,10 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
 
 {% block breadcrumbs %}
-    <div class="px-4">
+    <div class="px-4" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
         <div class="container mb-12 mx-auto -my-3">
-            <ul class="flex flex-wrap">
+            <ul class="flex flex-wrap {% if LANGUAGE_BIDI %}flex-row-reverse{% endif %}">
                 {% url 'admin:index' as link %}
                 {% trans 'Home' as name %}
                 {% include 'unfold/helpers/breadcrumb_item.html' with link=link name=name %}
@@ -27,18 +28,18 @@
 
 {% block content %}
     {% if action_list %}
-        <table class="border-base-200 border-spacing-none border-separate mb-6 w-full lg:border lg:rounded-default lg:shadow-xs lg:dark:border-base-800">
+        <table class="border-base-200 border-spacing-none border-separate mb-6 w-full lg:border lg:rounded-default lg:shadow-xs lg:dark:border-base-800" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
             <thead class="hidden lg:table-header-group text-base-900 dark:text-base-100">
                 <tr>
-                    <th class="align-middle font-medium px-3 py-2 text-left">
+                    <th class="align-middle font-medium px-3 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
                         {% translate 'Date/time' %}
                     </th>
 
-                    <th class="align-middle font-medium px-3 py-2 text-left">
+                    <th class="align-middle font-medium px-3 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
                         {% translate 'User' %}
                     </th>
 
-                    <th class="align-middle font-medium px-3 py-2 text-left">
+                    <th class="align-middle font-medium px-3 py-2 {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
                         {% translate 'Action' %}
                     </th>
                 </tr>
@@ -47,15 +48,15 @@
             <tbody>
                 {% for action in action_list %}
                     <tr class="block border mb-3 rounded-default shadow-xs lg:table-row lg:border-none lg:mb-0 lg:shadow-none dark:border-base-800">
-                        <th class="align-middle flex border-t border-base-200 font-normal px-3 py-2 text-left before:flex before:capitalize before:content-[attr(data-label)] before:items-center before:mr-auto  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'Date/time' %}">
+                        <th class="align-middle flex border-t border-base-200 font-normal px-3 py-2 {% if LANGUAGE_BIDI %}text-right before:mr-0 before:ml-auto{% else %}text-left before:mr-auto before:ml-0{% endif %} before:flex before:capitalize before:content-[attr(data-label)] before:items-center  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'Date/time' %}">
                             {{ action.action_time|date:"DATETIME_FORMAT" }}
                         </th>
 
-                        <td class="align-middle flex border-t border-base-200 font-normal px-3 py-2 text-left before:flex before:capitalize before:content-[attr(data-label)] before:items-center before:mr-auto  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'User' %}">
+                        <td class="align-middle flex border-t border-base-200 font-normal px-3 py-2 {% if LANGUAGE_BIDI %}text-right before:mr-0 before:ml-auto{% else %}text-left before:mr-auto before:ml-0{% endif %} before:flex before:capitalize before:content-[attr(data-label)] before:items-center  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'User' %}">
                             {{ action.user.get_username }}{% if action.user.get_full_name %} ({{ action.user.get_full_name }}){% endif %}
                         </td>
 
-                        <td class="align-middle flex border-t border-base-200 font-normal px-3 py-2 text-left before:flex before:capitalize before:content-[attr(data-label)] before:items-center before:mr-auto  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'Action' %}">
+                        <td class="align-middle flex border-t border-base-200 font-normal px-3 py-2 {% if LANGUAGE_BIDI %}text-right before:mr-0 before:ml-auto{% else %}text-left before:mr-auto before:ml-0{% endif %} before:flex before:capitalize before:content-[attr(data-label)] before:items-center  first:border-t-0lg:before:hidden lg:first:border-t lg:py-3 lg:table-cell dark:border-base-800" data-label="{% translate 'Action' %}">
                             {{ action.get_change_message }}
                         </td>
                     </tr>
@@ -63,10 +64,10 @@
             </tbody>
         </table>
 
-        <div class="bg-base-50 flex my-4 items-center p-3 rounded-default dark:bg-base-800">
+        <div class="bg-base-50 flex my-4 items-center p-3 rounded-default dark:bg-base-800" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
             {% if pagination_required %}
                 {% for i in page_range %}
-                    <span class="pr-4">
+                    <span class="{% if LANGUAGE_BIDI %}pl-4{% else %}pr-4{% endif %}">
                         {% if i == action_list.paginator.ELLIPSIS %}
                             {{ action_list.paginator.ELLIPSIS }}
                         {% elif i == action_list.number %}
@@ -81,6 +82,6 @@
             {{ action_list.paginator.count }} {% blocktranslate count counter=action_list.paginator.count %}entry{% plural %}entries{% endblocktranslate %}
         </div>
     {% else %}
-        <p>{% translate 'This object doesn’t have a change history. It probably wasn’t added via this admin site.' %}</p>
+        <p dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{% translate 'This object doesn’t have a change history. It probably wasn’t added via this admin site.' %}</p>
     {% endif %}
 {% endblock %}
