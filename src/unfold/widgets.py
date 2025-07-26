@@ -29,9 +29,10 @@ from django.forms import (
     Select,
     SelectMultiple,
 )
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, get_language_bidi
 
 from .exceptions import UnfoldException
+
 
 BUTTON_CLASSES = [
     "border",
@@ -59,6 +60,7 @@ LABEL_CLASSES = [
 CHECKBOX_LABEL_CLASSES = [
     "font-semibold",
     "ml-2",
+    "mr-2",
     "text-sm",
     "text-font-important-light",
     "dark:text-font-important-dark",

@@ -2,31 +2,8 @@
 
 {% if actions_on_top %}
     {% if cl.search_fields or action_form or cl.has_filters %}
-        <div 
-            class="bottom-0 left-0 right-0 hidden bg-primary-600 group-has-[input.action-select:checked]:flex fixed gap-3 lg:h-[64px] items-center p-3 z-50 lg:flex-row dark:bg-primary-500"
-            dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
-            {% if LANGUAGE_BIDI %}
-                style="direction: rtl;"
-            {% else %}
-                style="direction: ltr;"
-            {% endif %}
-        >
-            <div 
-                id="changelist-actions-wrapper" 
-                class="grow"
-                {% if not is_popup %}
-                    {% if LANGUAGE_BIDI %}
-                        x-bind:class="{'xl:ml-0': !sidebarDesktopOpen, 'xl:ml-72': sidebarDesktopOpen}"
-                    {% else %}
-                        x-bind:class="{'xl:ml-0': !sidebarDesktopOpen, 'xl:ml-72': sidebarDesktopOpen}"
-                    {% endif %}
-                {% endif %}
-                {% if LANGUAGE_BIDI %}
-                    style="text-align: right;"
-                {% else %}
-                    style="text-align: left;"
-                {% endif %}
-            >
+        <div class="bottom-0 left-0 right-0 hidden bg-primary-600 group-has-[input.action-select:checked]:flex fixed gap-3 lg:h-[64px] items-center p-3 z-50 lg:flex-row dark:bg-primary-500" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+            <div id="changelist-actions-wrapper" class="grow" {% if not is_popup %}{% if LANGUAGE_BIDI %}x-bind:class="{'xl:mr-0': !sidebarDesktopOpen, 'xl:mr-72': sidebarDesktopOpen}"{% else %}x-bind:class="{'xl:ml-0': !sidebarDesktopOpen, 'xl:ml-72': sidebarDesktopOpen}"{% endif %}{% endif %}>
                 {% if action_form %}
                     {% admin_actions %}
                 {% endif %}

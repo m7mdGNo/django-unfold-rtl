@@ -1,49 +1,41 @@
 {% load i18n %}
 
-{% get_current_language as LANGUAGE_CODE %}
-{% if LANGUAGE_CODE in "ar he fa ur ps dv yi" %}
-    {% with "rtl" as DIR %}
-{% else %}
-    {% with "ltr" as DIR %}
-{% endif %}
-
 {% if widget.attrs.accept == 'image/*' and widget.is_initial %}
-    <div class="mb-4 max-w-48" dir="{{ DIR }}">
+    <div class="mb-4 max-w-48">
         <a href="{{ widget.value.url }}" target="_blank">
             <img src="{{ widget.value.url }}" alt="{% trans 'Image preview' %}" class="block rounded-default" />
         </a>
     </div>
 {% endif %}
 
-<div class="{{ widget.file_wrapper_class }}" dir="{{ DIR }}">
+<div class="{{ widget.file_wrapper_class }}">
     {% if widget.is_initial and not widget.required %}
-        <div class="bg-base-50 border-r border-base-200 flex flex-none items-center self-stretch px-3 dark:bg-white/[.02] dark:border-base-700 dark:text-font-default-dark" dir="{{ DIR }}">
-            <label for="{{ widget.checkbox_id }}" class="flex items-center" dir="{{ DIR }}">
+        <div class="bg-base-50 border-r border-base-200 flex flex-none items-center self-stretch px-3 dark:bg-white/[.02] dark:border-base-700 dark:text-font-default-dark">
+            <label for="{{ widget.checkbox_id }}" class="flex items-center">
                 <input type="checkbox"{% if widget.class %} class="{{ widget.class }}"{% endif %} name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" />
 
-                <span class="{% if DIR == 'rtl' %}mr-2{% else %}ml-2{% endif %}">
+                <span class="ml-2">
                     {{ widget.clear_checkbox_label }}
                 </span>
             </label>
         </div>
     {% endif %}
 
-    <input type="text" aria-label="{% trans 'Choose file to upload' %}" value="{% if widget.value %}{{ widget.value.url }}{% else %}{% trans 'Choose file to upload' %}{% endif %}" disabled class="bg-white grow font-medium min-w-0 px-3 py-2 text-ellipsis dark:bg-base-900" dir="{{ DIR }}" {% if DIR == 'rtl' %}style="text-align: right;"{% else %}style="text-align: left;"{% endif %}>
+    <input type="text" aria-label="{% trans 'Choose file to upload' %}" value="{% if widget.value %}{{ widget.value.url }}{% else %}{% trans 'Choose file to upload' %}{% endif %}" disabled class="bg-white grow font-medium min-w-0 px-3 py-2 text-ellipsis dark:bg-base-900">
 
-    <div class="bg-white flex flex-none items-center leading-none self-stretch dark:bg-base-900" dir="{{ DIR }}">
-        <div class="opacity-0 overflow-hidden w-[0px]" dir="{{ DIR }}">
+    <div class="bg-white flex flex-none items-center leading-none self-stretch dark:bg-base-900">
+        <div class="opacity-0 overflow-hidden w-[0px]">
             <input type="{{ widget.type }}" name="{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %} />
         </div>
 
         {% if widget.is_initial %}
-            <a href="{{ widget.value.url }}" class="border-r border-base-200 cursor-pointer text-base-400 px-3 hover:text-base-700 dark:border-base-700 dark:text-base-500 dark:hover:text-base-200" target="_blank" dir="{{ DIR }}">
+            <a href="{{ widget.value.url }}" class="border-r border-base-200 cursor-pointer text-base-400 px-3 hover:text-base-700 dark:border-base-700 dark:text-base-500 dark:hover:text-base-200" target="_blank">
                 <span class="block material-symbols-outlined">download</span>
             </a>
         {% endif %}
 
-        <label for="{{ widget.attrs.id }}" class="cursor-pointer text-base-400 px-3 hover:text-base-700 dark:text-base-500 dark:hover:text-base-200" dir="{{ DIR }}">
+        <label for="{{ widget.attrs.id }}" class="cursor-pointer text-base-400 px-3 hover:text-base-700 dark:text-base-500 dark:hover:text-base-200">
             <span class="block material-symbols-outlined">upload</span>
         </label>
     </div>
 </div>
-{% endwith %}

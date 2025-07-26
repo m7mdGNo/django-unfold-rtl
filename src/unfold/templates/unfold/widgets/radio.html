@@ -1,17 +1,13 @@
 {% with id=widget.attrs.id %}
-    <div
-        {% if id %} id="{{ id }}"{% endif %}
-        class="flex gap-2 {% if radio_style == 1 %} flex-row gap-4{% else %} flex-col{% endif %}"
-        dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
-    >
+    <div{% if id %} id="{{ id }}"{% endif %} class="flex gap-2 {% if radio_style == 1 %} flex-row gap-4{% else %} flex-col{% endif %}">
         {% for group, options, index in widget.optgroups %}
             {% if group %}
                 <div>
-                    <label dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{{ group }}</label>
+                    <label>{{ group }}</label>
             {% endif %}
 
             {% for option in options %}
-                <div dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+                <div>
                     {% include option.template_name with widget=option %}
                 </div>
             {% endfor %}
