@@ -1,11 +1,13 @@
 {% if widget.wrap_label %}
-    <label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="flex flex-row items-center gap-2">
+    <label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}
+        class="flex flex-row items-center gap-2"
+        dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 {% endif %}
 
 {% include "django/forms/widgets/input.html" %}
 
 {% if widget.wrap_label %}
-    <span class="truncate">
+    <span class="truncate" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
         {{ widget.label }}
     </span>
     </label>

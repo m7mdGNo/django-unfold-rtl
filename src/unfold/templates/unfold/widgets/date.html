@@ -1,3 +1,5 @@
-<div class="flex flex-col max-w-2xl min-w-56 relative w-full">
+{% load i18n %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<div class="flex flex-col max-w-2xl min-w-56 relative w-full" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     {% include "django/forms/widgets/input.html" %}
 </div>

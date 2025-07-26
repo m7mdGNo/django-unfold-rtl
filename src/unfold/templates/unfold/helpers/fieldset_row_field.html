@@ -1,8 +1,10 @@
-<div class="{% if adminform.model_admin.compressed_fields %}lg:min-w-56 lg:mt-2 lg:w-56{% endif %}">
+{% load i18n %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<div class="{% if adminform.model_admin.compressed_fields %}lg:min-w-56 lg:mt-2 lg:w-56{% endif %}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     {{ field.label_tag }}
 </div>
 
-<div class="grow relative">
+<div class="grow relative" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     {% if field.is_readonly %}
         {% include "unfold/helpers/field_readonly_value.html" %}
     {% else %}

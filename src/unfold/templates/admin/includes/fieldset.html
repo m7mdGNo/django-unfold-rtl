@@ -1,15 +1,21 @@
-{% load unfold %}
+{% load unfold i18n %}
 
-<fieldset class="module relative {% if fieldset.classes %} {{ fieldset.classes }}{% endif %}" {% if stacked != 1 %}x-show="activeTab == 'general'"{% endif %}>
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<fieldset 
+    class="module relative{% if fieldset.classes %} {{ fieldset.classes }}{% endif %}" 
+    {% if stacked != 1 %}x-show="activeTab == 'general'"{% endif %}
+    dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
+>
     {% if fieldset.is_collapsible %}<details><summary>{% endif %}
 
     {% if fieldset.name and "tab" not in fieldset.classes %}
         {% if stacked == 1 %}
-            <h2 class="border-b border-base-200 border-t border-dashed font-semibold text-font-important-light px-3 py-4.5 dark:text-font-important-dark dark:border-base-800 {% if fieldset.is_collapsible %}cursor-pointer{% endif %}">
+            <h2 class="border-b border-base-200 border-t border-dashed font-semibold text-font-important-light px-3 py-4.5 dark:text-font-important-dark dark:border-base-800 {% if fieldset.is_collapsible %}cursor-pointer{% endif %} {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
                 {{ fieldset.name }}
             </h2>
         {% else %}
-            <h2 class="bg-base-100 font-semibold mb-6 px-4 py-3 rounded-default text-font-important-light text-sm 2xl:-mx-4 dark:bg-white/[.02] dark:text-font-important-dark {% if fieldset.is_collapsible %}cursor-pointer{% endif %}">
+            <h2 class="bg-base-100 font-semibold mb-6 px-4 py-3 rounded-default text-font-important-light text-sm 2xl:-mx-4 dark:bg-white/[.02] dark:text-font-important-dark {% if fieldset.is_collapsible %}cursor-pointer{% endif %} {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
                 {{ fieldset.name }}
             </h2>
         {% endif %}
@@ -18,14 +24,14 @@
     {% if fieldset.is_collapsible %}</summary>{% endif %}
 
     {% if fieldset.description %}
-        <div class="leading-relaxed mb-4 max-w-4xl text-sm">
+        <div class="leading-relaxed mb-4 max-w-4xl text-sm {% if LANGUAGE_BIDI %}text-right{% else %}text-left{% endif %}">
             {{ fieldset.description|safe }}
         </div>
     {% endif %}
 
-    <div class="{% fieldset_rows_classes %}">
+    <div class="{% fieldset_rows_classes %}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
         {% for line in fieldset %}
-            {% include "unfold/helpers/fieldset_row.html" %}
+            {% include "unfold/helpers/fieldset_row.html" with LANGUAGE_BIDI=LANGUAGE_BIDI %}
         {% endfor %}
     </div>
 

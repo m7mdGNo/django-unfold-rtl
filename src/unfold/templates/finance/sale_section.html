@@ -1,0 +1,116 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block title %}
+    {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+{% if LANGUAGE_BIDI %}
+    {% block extrastyle %}
+        <style>
+        </style>
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <!-- Dashboard Title -->
+    <h1 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+        {% trans 'Dashboard' %}
+    </h1>
+
+    {% if dashboard %}
+        <!-- Only the first chart (Area Chart) -->
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Last Week Reservations Chart (Area Chart) -->
+            <div class="border flex flex-col flex-grow overflow-hidden p-6 relative rounded shadow-sm dark:border-base-800">
+                <div class="flex-grow relative">
+                    <p class="">
+                        {% trans "Daily Sales" %}
+                    </p>
+                    <div id="chart1" class="w-full h-[300px] mt-4 "></div>
+                </div>
+            </div>
+            <!-- end chart -->
+        </div>
+        <!-- end charts grid -->
+
+    <!-- Font Awesome and ApexCharts Scripts -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        // Area Chart (Last Week Reservations)
+        const options1 = {
+            chart: {
+                type: 'area',
+                height: 300,
+                background: 'transparent',
+                toolbar: {
+                    show: false
+                }
+            },
+            series: [{
+                name: 'sales',
+                data: {{ dashboard.daily_sales.data|safe }}
+            }],
+            xaxis: {
+                categories: {{ dashboard.daily_sales.labels|safe }},
+                labels: {
+                    show: true,
+                    style: {
+                        colors: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151'
+                    }
+                },
+
+            },
+            colors: ['#14b8a6'], // Tailwind teal-500
+            theme: {
+                mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            grid: {
+                borderColor: document.documentElement.classList.contains('dark') ? '#4a5568' : '#e2e8f0'
+            },
+            tooltip: {
+                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            }
+        };
+        const chartElement = document.querySelector("#chart1");
+        const chart1 = new ApexCharts(chartElement, options1);
+        chart1.render();
+        console.log(chartElement)
+
+        // Theme Switch Listener
+        const observer = new MutationObserver(() => {
+            const isDark = document.documentElement.classList.contains('dark');
+            chart1.updateOptions({
+                theme: { mode: isDark ? 'dark' : 'light' },
+                xaxis: {categories: {{ dashboard.daily_sales.labels|safe }}, labels: { style: { colors: isDark ? '#d1d5db' : '#374151' } } },
+                grid: { borderColor: isDark ? '#4a5568' : '#e2e8f0' },
+                tooltip: { theme: isDark ? 'dark' : 'light' }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    </script>
+    {% else %}
+        <div class="flex items-center justify-center h-64">
+            <h1 class="text-4xl font-bold text-center text-gray-800 dark:text-white">
+                Hello {{ request.user.first_name }} {{ request.user.last_name }}!
+            </h1>
+        </div>
+    {% endif %}
+{% endblock %}

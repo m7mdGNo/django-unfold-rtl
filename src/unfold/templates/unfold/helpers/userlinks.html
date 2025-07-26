@@ -16,6 +16,43 @@
             {% include "unfold/helpers/theme_switch.html" %}
 
             {% include "unfold/helpers/account_links.html" %}
+
+            <!-- Full Screen Logo Button -->
+            <button 
+                type="button"
+                class="flex items-center justify-center w-8 h-8 rounded hover:bg-base-100 dark:hover:bg-white/[.06] transition"
+                title="{% trans 'Toggle Full Screen' %}"
+                aria-label="{% trans 'Toggle Full Screen' %}"
+                id="fullscreen-toggle"
+                onclick="
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                        this.querySelector('span').textContent = 'fullscreen_exit';
+                    } else {
+                        document.exitFullscreen();
+                        this.querySelector('span').textContent = 'fullscreen';
+                    }
+                "
+            >
+                <span class="material-symbols-outlined text-lg">fullscreen</span>
+            </button>
+            <script>
+                // Optional: update icon if user exits fullscreen via ESC or other means
+                document.addEventListener('fullscreenchange', function() {
+                    var btn = document.getElementById('fullscreen-toggle');
+                    if (btn) {
+                        var icon = btn.querySelector('span');
+                        if (icon) {
+                            if (document.fullscreenElement) {
+                                icon.textContent = 'fullscreen_exit';
+                            } else {
+                                icon.textContent = 'fullscreen';
+                            }
+                        }
+                    }
+                });
+            </script>
+            <!-- End Full Screen Logo Button -->
         </div>
     </div>
 
